@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Transição: Caixas GEP para Mesas GPI - SASHDS</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            gov: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="bg-gov-900 text-white shadow-lg no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-center space-x-3">
+          <div class="bg-gov-700 p-3 rounded-xl border border-gov-600 shadow-inner">
+            <i class="fa-solid fa-folder-tree text-2xl text-gov-100"></i>
+          </div>
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-gov-100 bg-gov-800 px-2.5 py-0.5 rounded-full border border-gov-600">
+              SASHDS / SEMDES - Processo Eletrônico
+            </span>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white mt-1">
+              Painel de Transição: Caixas GEP para Mesas GPI
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-300 mt-0.5">
+              Mapeamento Oficial de Servidores Mantidos, Não Mantidos e Reestruturação de Caixas Setoriais
+            </p>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+          <button onclick="window.print()" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3.5 py-2 rounded-lg border border-slate-700 transition shadow-sm cursor-pointer">
+            <i class="fa-solid fa-print"></i>
+            <span>Imprimir</span>
+          </button>
+          <button onclick="exportCSV()" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-medium px-3.5 py-2 rounded-lg transition shadow-sm cursor-pointer">
+            <i class="fa-solid fa-file-csv"></i>
+            <span>Exportar CSV (Aba Ativa)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- SUMMARY CARDS (KPIs) -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      
+      <!-- Card 1: Total Mantidos/Incluídos -->
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Mantidos / Incluídos</p>
+          <h3 class="text-2xl font-bold text-emerald-600 mt-1">197</h3>
+          <p class="text-[11px] text-slate-500 mt-0.5">Acesso Confirmado no GPI</p>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg">
+          <i class="fa-solid fa-user-check"></i>
+        </div>
+      </div>
+
+      <!-- Card 2: Excluídos (NÃO) -->
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Não Mantidos (Opção NÃO)</p>
+          <h3 class="text-2xl font-bold text-rose-600 mt-1">195</h3>
+          <p class="text-[11px] text-slate-500 mt-0.5">Registros Válidos Removidos</p>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-lg">
+          <i class="fa-solid fa-user-xmark"></i>
+        </div>
+      </div>
+
+      <!-- Card 3: Inclusões via Observação -->
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Inclusões em Obs.</p>
+          <h3 class="text-2xl font-bold text-amber-600 mt-1">17</h3>
+          <p class="text-[11px] text-slate-500 mt-0.5">Novos Servidores Adicionados</p>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-lg">
+          <i class="fa-solid fa-user-plus"></i>
+        </div>
+      </div>
+
+      <!-- Card 4: Caixas Restruturadas -->
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Mudanças de Caixa</p>
+          <h3 class="text-2xl font-bold text-indigo-600 mt-1">25</h3>
+          <p class="text-[11px] text-slate-500 mt-0.5">Adequações e Novas Mesas</p>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-lg">
+          <i class="fa-solid fa-boxes-packing"></i>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB NAVIGATION CONTAINER -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+      
+      <!-- NAVIGATION TABS HEADER -->
+      <div class="border-b border-slate-200 bg-slate-50/80 px-4 pt-3 flex flex-wrap gap-2 no-print">
+        <button id="tab-btn-incluidos" onclick="switchTab('incluidos')" class="tab-btn active inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 border-emerald-600 text-emerald-800 transition cursor-pointer">
+          <i class="fa-solid fa-user-check"></i>
+          <span>Servidores Mantidos no GPI (197)</span>
+        </button>
+        <button id="tab-btn-excluidos" onclick="switchTab('excluidos')" class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 transition cursor-pointer">
+          <i class="fa-solid fa-user-xmark"></i>
+          <span>Servidores Não Mantidos nas Caixas (195)</span>
+        </button>
+        <button id="tab-btn-mudancas" onclick="switchTab('mudancas')" class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 transition cursor-pointer">
+          <i class="fa-solid fa-right-left"></i>
+          <span>Caixas com Alterações / Exclusões (25)</span>
+        </button>
+      </div>
+
+      <!-- ================= TAB 1: SERVIDORES MANTIDOS / INCLUÍDOS ================= -->
+      <div id="tab-content-incluidos" class="p-4 sm:p-6 flex flex-col gap-4">
+        
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 no-print">
+          <div class="md:col-span-5 relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            </div>
+            <input type="text" id="search-incluidos" oninput="applyFiltersIncluidos()" placeholder="Buscar por Servidor, Matrícula ou Caixa..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition">
+          </div>
+
+          <div class="md:col-span-4">
+            <select id="filter-caixa-incluidos" onchange="applyFiltersIncluidos()" class="w-full py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition">
+              <option value="">Todas as Caixas / Mesas</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-3">
+            <select id="filter-origem-incluidos" onchange="applyFiltersIncluidos()" class="w-full py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition">
+              <option value="">Todas as Origens</option>
+              <option value="Marcado como SIM">Marcado com SIM (180)</option>
+              <option value="Inclusão via Observação">Via Observação (17)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-500 pt-1 pb-1 px-1">
+          <div>
+            Exibindo <span class="font-semibold text-slate-800" id="count-incluidos">197</span> de <span class="font-semibold text-slate-800">197</span> registos
+          </div>
+          <button onclick="clearFiltersIncluidos()" id="btn-clear-incluidos" class="hidden text-emerald-700 hover:underline font-medium cursor-pointer">
+            <i class="fa-solid fa-xmark mr-1"></i>Limpar Filtros
+          </button>
+        </div>
+
+        <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-xl shadow-xs">
+          <table class="w-full text-left border-collapse" id="table-incluidos">
+            <thead>
+              <tr class="bg-slate-100 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider select-none">
+                <th scope="col" class="py-3 px-3 w-14 text-center cursor-pointer hover:bg-slate-200 transition" onclick="sortIncluidos(0)">
+                  # <i class="fa-solid fa-sort ml-1 text-slate-400" id="sort-inc-0"></i>
+                </th>
+                <th scope="col" class="py-3 px-4 cursor-pointer hover:bg-slate-200 transition" onclick="sortIncluidos(1)">
+                  Caixa / Mesa do GPI <i class="fa-solid fa-sort ml-1 text-slate-400" id="sort-inc-1"></i>
+                </th>
+                <th scope="col" class="py-3 px-4 cursor-pointer hover:bg-slate-200 transition" onclick="sortIncluidos(2)">
+                  Nome do Servidor <i class="fa-solid fa-sort ml-1 text-slate-400" id="sort-inc-2"></i>
+                </th>
+                <th scope="col" class="py-3 px-4 w-32 cursor-pointer hover:bg-slate-200 transition" onclick="sortIncluidos(3)">
+                  Matrícula <i class="fa-solid fa-sort ml-1 text-slate-400" id="sort-inc-3"></i>
+                </th>
+                <th scope="col" class="py-3 px-4 w-44 text-center cursor-pointer hover:bg-slate-200 transition" onclick="sortIncluidos(4)">
+                  Status / Origem <i class="fa-solid fa-sort ml-1 text-slate-400" id="sort-inc-4"></i>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="tbody-incluidos" class="divide-y divide-slate-100 text-sm">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= TAB 2: SERVIDORES NÃO MANTIDOS ================= -->
+      <div id="tab-content-excluidos" class="p-4 sm:p-6 hidden flex-col gap-4">
+        
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 no-print">
+          <div class="md:col-span-6 relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            </div>
+            <input type="text" id="search-excluidos" oninput="applyFiltersExcluidos()" placeholder="Buscar por Servidor, Matrícula ou Caixa..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rose-600 focus:bg-white transition">
+          </div>
+
+          <div class="md:col-span-6">
+            <select id="filter-caixa-excluidos" onchange="applyFiltersExcluidos()" class="w-full py-2 px-3 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-rose-600 focus:bg-white transition">
+              <option value="">Todas as Caixas / Mesas Originais</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-500 pt-1 pb-1 px-1">
+          <div>
+            Exibindo <span class="font-semibold text-slate-800" id="count-excluidos">195</span> de <span class="font-semibold text-slate-800">195</span> registos
+          </div>
+          <button onclick="clearFiltersExcluidos()" id="btn-clear-excluidos" class="hidden text-rose-700 hover:underline font-medium cursor-pointer">
+            <i class="fa-solid fa-xmark mr-1"></i>Limpar Filtros
+          </button>
+        </div>
+
+        <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-xl shadow-xs">
+          <table class="w-full text-left border-collapse" id="table-excluidos">
+            <thead>
+              <tr class="bg-slate-100 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider select-none">
+                <th scope="col" class="py-3 px-3 w-14 text-center cursor-pointer hover:bg-slate-200 transition" onclick="sortExcluidos(0)">
+                  # <i class="fa-solid fa-sort ml-1 text-slate-400" id="sort-exc-0"></i>
+                </th>
+                <th scope="col" class="py-3 px-4 cursor-pointer hover:bg-slate-200 transition" onclick="sortExcluidos(1)">
+                  Caixa / Mesa de Origem (GEP) <i class="fa-solid fa-sort ml-1 text-slate-400" id="sort-exc-1"></i>
+                </th>
+                <th scope="col" class="py-3 px-4 cursor-pointer hover:bg-slate-200 transition" onclick="sortExcluidos(2)">
+                  Nome do Servidor <i class="fa-solid fa-sort ml-1 text-slate-400" id="sort-exc-2"></i>
+                </th>
+                <th scope="col" class="py-3 px-4 w-32 cursor-pointer hover:bg-slate-200 transition" onclick="sortExcluidos(3)">
+                  Matrícula <i class="fa-solid fa-sort ml-1 text-slate-400" id="sort-exc-3"></i>
+                </th>
+                <th scope="col" class="py-3 px-4 w-44 text-center">
+                  Situação no GPI
+                </th>
+              </tr>
+            </thead>
+            <tbody id="tbody-excluidos" class="divide-y divide-slate-100 text-sm">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= TAB 3: MUDANÇAS DE CAIXAS ================= -->
+      <div id="tab-content-mudancas" class="p-4 sm:p-6 hidden flex-col gap-4">
+        <div class="bg-blue-50 border-l-4 border-gov-600 p-4 rounded-r-xl mb-2">
+          <div class="flex items-start">
+            <i class="fa-solid fa-circle-info text-gov-600 text-lg mt-0.5 mr-3"></i>
+            <div>
+              <h4 class="text-sm font-semibold text-gov-900">Resumo de Reestruturação das Caixas (GEP para GPI)</h4>
+              <p class="text-xs text-gov-800 mt-0.5">
+                Mapeamento das caixas que foram renomeadas, adequadas com novas siglas, desmembradas, descontinuadas (excluídas) ou criadas no GPI Processo Eletrônico.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-xl shadow-xs">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                <th scope="col" class="py-3 px-3 w-12 text-center">#</th>
+                <th scope="col" class="py-3 px-4">Setor / Caixa Origem (GEP)</th>
+                <th scope="col" class="py-3 px-4">Nova Denominação / Situação no GPI</th>
+                <th scope="col" class="py-3 px-4 w-48 text-center">Categoria</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-mudancas" class="divide-y divide-slate-100 text-sm">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-100 border-t border-slate-200 mt-8 py-4 no-print text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4">
+      Secretaria Municipal de Desenvolvimento Social - SASHDS / SEMDES &bull; Transição de Caixas GEP para GPI Processo Eletrônico
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT DATA & LOGIC -->
+  <script>
+    // DATA DATASET
+    const rawData = {"servidores": [{"setor": "ADICIONAR", "nome": "Alexsandro da Silva Cardoso", "matricula": "06663-1", "origem": "Marcado como SIM"}, {"setor": "ADICIONAR", "nome": "Antônio Gilton Barros Viterbo", "matricula": "15106-3", "origem": "Marcado como SIM"}, {"setor": "ADICIONAR", "nome": "Daniel Fernandes Barbosa Magalhães", "matricula": "31007-3", "origem": "Marcado como SIM"}, {"setor": "ADICIONAR", "nome": "Dulcineia Carvalho de Oliveira", "matricula": "14272-2", "origem": "Marcado como SIM"}, {"setor": "ADICIONAR", "nome": "Ian Silva de Andrade", "matricula": "30840-5", "origem": "Marcado como SIM"}, {"setor": "ADICIONAR", "nome": "Jaci Rozana Menezes Viana", "matricula": "30933-3", "origem": "Marcado como SIM"}, {"setor": "ADICIONAR", "nome": "Jackson Cleber Amaral Santos", "matricula": "21043-4", "origem": "Marcado como SIM"}, {"setor": "ADICIONAR", "nome": "Jessica Rocha Gomes", "matricula": "30841-5", "origem": "Marcado como SIM"}, {"setor": "ADICIONAR", "nome": "João da Paz de Souza Vieira", "matricula": "30916-3", "origem": "Marcado como SIM"}, {"setor": "ADICIONAR", "nome": "Tatyane Chaves Moreira", "matricula": "31007-7", "origem": "Marcado como SIM"}, {"setor": "ADICIONAR", "nome": "Vanusa Oliveira Macedo", "matricula": "71319-3", "origem": "Marcado como SIM"}, {"setor": "ADICONAR", "nome": "ESDRAS SANTOS PRADO", "matricula": "24111-9", "origem": "Marcado como SIM"}, {"setor": "ADICONAR", "nome": "Josemar Rosa Senna", "matricula": "15264-7", "origem": "Marcado como SIM"}, {"setor": "ADICONAR", "nome": "Pedro Antônio Damascena de Freitas", "matricula": "30786-1", "origem": "Marcado como SIM"}, {"setor": "ADICONAR", "nome": "Talyssa Casal Rosemberg Mendes", "matricula": "31001-0", "origem": "Marcado como SIM"}, {"setor": "Abrigo Provisório Pernoite", "nome": "Wadson Botelho Ribeiro", "matricula": "24530-0", "origem": "Marcado como SIM"}, {"setor": "Acolhendo e Cuidando", "nome": "Isaque Oliveira Ferraz", "matricula": "A informar", "origem": "Inclusão via Observação"}, {"setor": "Acolhendo e Cuidando", "nome": "Manoela Soares Vieira Gomes Guimarães", "matricula": "30989-3", "origem": "Marcado como SIM"}, {"setor": "Assessoria Especial 1", "nome": "Augusto Jorge José Leal", "matricula": "24693-3", "origem": "Marcado como SIM"}, {"setor": "Assessoria Especial 1", "nome": "DENIS MÁRCIO JESUS OLIVEIRA", "matricula": "30736-2", "origem": "Inclusão via Observação"}, {"setor": "Ações Estratégicas para a Primeira Infância", "nome": "Jeferson Silva Santos", "matricula": "31003-9", "origem": "Marcado como SIM"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "Adriana Alves Lemos", "matricula": "14251-0", "origem": "Marcado como SIM"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "BEATRIZ PIRES LIMA LUZ", "matricula": "30793-7", "origem": "Marcado como SIM"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "Erick Fernandes Dutra Santos", "matricula": "30847-0", "origem": "Marcado como SIM"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "Felisbelo Vilaça de Assunção Neto", "matricula": "31004-9", "origem": "Marcado como SIM"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "Joabe Silva Oliveira", "matricula": "13811-2", "origem": "Marcado como SIM"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "LEANDRO AGUIAR VILASBOAS", "matricula": "30841-1", "origem": "Marcado como SIM"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "Laylla Dutra Cruz", "matricula": "30935-6", "origem": "Marcado como SIM"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "Monica Pereira da Silva", "matricula": "13222-0", "origem": "Marcado como SIM"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "ROSANGELA SILVA AMARAL LIMA", "matricula": "31005-9", "origem": "Marcado como SIM"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "Severino Godson Santos Castro", "matricula": "24196-2", "origem": "Marcado como SIM"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "Sisa da Silva Carvalho Soares", "matricula": "30994-2", "origem": "Marcado como SIM"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "Thaísa Lopes Santana", "matricula": "31009-3", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Execução Orçamentária", "nome": "MARINA PAIVA SANTOS", "matricula": "30840-2", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Execução Orçamentária", "nome": "MILTON LEITE FREITAS", "matricula": "04348-0", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Execução Orçamentária", "nome": "MONICA PEREIRA DA SILVA", "matricula": "13222-0", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Execução Orçamentária", "nome": "Severino Godson Santos Castro", "matricula": "24196-2", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Gestão de Parcerias", "nome": "Joseane Maria de Almeida", "matricula": "30988-0", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Gestão de Parcerias", "nome": "Vannaide Freitas Bahiano Brandão", "matricula": "03999-5", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Planejamento e Controle Orçamentário", "nome": "Erick Fernandes Dutra Santos", "matricula": "30847-0", "origem": "Inclusão via Observação"}, {"setor": "COF - Gerência de Planejamento e Controle Orçamentário", "nome": "Joabe Silva Oliveira", "matricula": "30540-2", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Planejamento e Controle Orçamentário", "nome": "ROSANGELA SILVA AMARAL LIMA", "matricula": "31005-9", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Prestação de Contas", "nome": "Claudio Motta Santos Filho", "matricula": "31009-2", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Prestação de Contas", "nome": "LEANDRO AGUIAR VILASBOAS", "matricula": "30841-1", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Tesouraria e Contabilidade", "nome": "ADRIANA ALVES LEMOS", "matricula": "14251-0", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Tesouraria e Contabilidade", "nome": "BEATRIZ PIRES LIMA LUZ", "matricula": "30793-7", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Tesouraria e Contabilidade", "nome": "FELISBELO VILAÇA DE ASSUNÇÃO NETO", "matricula": "30627-8", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Tesouraria e Contabilidade", "nome": "LAYLLA DUTRA CRUZ", "matricula": "30935-6", "origem": "Marcado como SIM"}, {"setor": "COF - Gerência de Tesouraria e Contabilidade", "nome": "Wellton Rocha dos Anjos", "matricula": "30996-6", "origem": "Marcado como SIM"}, {"setor": "CRAS 1 - Bruno Bacelar", "nome": "Adriana Matos Marinho", "matricula": "24558-0", "origem": "Marcado como SIM"}, {"setor": "CRAS 2 - Vila América", "nome": "IRANI AGUIAR DOS SANTOS LUZ", "matricula": "30986-6", "origem": "Marcado como SIM"}, {"setor": "CRAS 3 - Pedrinhas", "nome": "Elíude Silva Bonfim", "matricula": "30588-5", "origem": "Marcado como SIM"}, {"setor": "CRAS 4 - Jardim Valéria", "nome": "Gilmara Novais Silva", "matricula": "30986-4", "origem": "Marcado como SIM"}, {"setor": "CRAS 5 - Intinerante", "nome": "Gleisse  Oliveira Cruz", "matricula": "24819-0", "origem": "Marcado como SIM"}, {"setor": "CRAS 6 - Nova Cidade", "nome": "Kátia Cristina Amaral  Sousa Matos", "matricula": "30988-5", "origem": "Marcado como SIM"}, {"setor": "CRAS 8 - Miro Cairo", "nome": "Eliane Joana da Cruz", "matricula": "30764-3", "origem": "Marcado como SIM"}, {"setor": "CRAS 9 - Conquista Criança", "nome": "Erilza Carla Mascarenhas Santos", "matricula": "30986-3", "origem": "Marcado como SIM"}, {"setor": "CREAS CIDCA", "nome": "Irian de Oliveira Bitencourt", "matricula": "30986-7", "origem": "Marcado como SIM"}, {"setor": "CREAS Central", "nome": "MAGNUM BORGES REZENDE", "matricula": "30989-0", "origem": "Marcado como SIM"}, {"setor": "CREAS Novo Olhar", "nome": "Andréia Gonçalves Santos", "matricula": "31008-2", "origem": "Marcado como SIM"}, {"setor": "CREAS Rural Bate Pé", "nome": "Caren Samantha Teixeira Fonseca", "matricula": "30985-2", "origem": "Marcado como SIM"}, {"setor": "CREAS Rural Bate Pé", "nome": "Teofilo Pedro Gobira Alves", "matricula": "30912-4", "origem": "Marcado como SIM"}, {"setor": "CREAS Rural José Gonçalves", "nome": "Jorgeane Silva de Oliveira Gama", "matricula": "30987-8", "origem": "Marcado como SIM"}, {"setor": "CREAS Rural José Gonçalves", "nome": "Teofilo Pedro Gobira Alves", "matricula": "30912-4", "origem": "Marcado como SIM"}, {"setor": "Centro Integrado dos Direitos da Criança e do Adolescente", "nome": "Ronaldo Ferraz Santos", "matricula": "30998-2", "origem": "Marcado como SIM"}, {"setor": "Centro POP Adulto", "nome": "Loize Santos Teixeira", "matricula": "30936-4", "origem": "Marcado como SIM"}, {"setor": "Centro POP Criança e Adolescente", "nome": "Jamile Queiroz Carvalho", "matricula": "30987-1", "origem": "Marcado como SIM"}, {"setor": "Centro de Convivência da Pessoa Idosa", "nome": "Janaína Mota Fonseca Portela", "matricula": "30837-3", "origem": "Marcado como SIM"}, {"setor": "Centro de Convivência da Pessoa Idosa", "nome": "Luciana Moreira de Andrade Silva", "matricula": "04396-8", "origem": "Marcado como SIM"}, {"setor": "Comitê Municipal de Gestão Colegiada Rede de Cuidado e de Proteção Social (CMRPC)", "nome": "Elaine Cristina Fontes Melo", "matricula": "30911-5", "origem": "Marcado como SIM"}, {"setor": "Comitê Municipal de Gestão Colegiada Rede de Cuidado e de Proteção Social (CMRPC)", "nome": "Jerry Lavelle Oliveira Lima", "matricula": "24899-3", "origem": "Marcado como SIM"}, {"setor": "Complexo de Escuta Protegida", "nome": "Ramon Oliveira de Jesus", "matricula": "30948-0", "origem": "Marcado como SIM"}, {"setor": "Complexo de Escuta Protegida", "nome": "Yasmin Fontes Melo", "matricula": "30848-6", "origem": "Marcado como SIM"}, {"setor": "Comunicação Social", "nome": "Rebecca Cerqueira Gomez Machado", "matricula": "30959-4", "origem": "Marcado como SIM"}, {"setor": "Conselho Municipal da Diversidade Sexual e de Gênero", "nome": "Dan Kaio Souza Lemos", "matricula": "30985-8", "origem": "Marcado como SIM"}, {"setor": "Conselho Municipal de Assistência Social", "nome": "JOABE SILVA OLIVEIRA", "matricula": "13811-2", "origem": "Inclusão via Observação"}, {"setor": "Conselho Municipal do Idoso", "nome": "Dayana Evelinne Andrade dos Santos Araujo", "matricula": "30629-7", "origem": "Inclusão via Observação"}, {"setor": "Conselho Municipal dos Direitos da Criança e do Adolescente", "nome": "Elaine Cristina Fontes Melo", "matricula": "99999-9", "origem": "Marcado como SIM"}, {"setor": "Conselho Municipal dos Direitos da Criança e do Adolescente", "nome": "Vannaide Freitas Bahiano Brandão", "matricula": "03999-5", "origem": "Marcado como SIM"}, {"setor": "Conselho Tutelar Zona 01", "nome": "Adriano Marciano dos Santos", "matricula": "30886-1", "origem": "Marcado como SIM"}, {"setor": "Conselho Tutelar Zona 01", "nome": "Daniela Lima de Souza", "matricula": "30934-2", "origem": "Marcado como SIM"}, {"setor": "Conselho Tutelar Zona 02", "nome": "Jonas José dos Santos Júnior", "matricula": "24148-5", "origem": "Marcado como SIM"}, {"setor": "Conselho Tutelar Zona 03", "nome": "Maria das Graças Rodrigues dos Santos", "matricula": "02530-7", "origem": "Marcado como SIM"}, {"setor": "Conselho Tutelar Zona 03", "nome": "Rosemary Gomes Silva Melo", "matricula": "30721-2", "origem": "Marcado como SIM"}, {"setor": "Conselho Tutelar Zona Rural", "nome": "Elusane Oliveira Putumujú", "matricula": "30601-8", "origem": "Marcado como SIM"}, {"setor": "Coordenação Administrativa", "nome": "Milena Naíra Vieira Machado", "matricula": "30560-9", "origem": "Marcado como SIM"}, {"setor": "Coordenação Técnica Municipal do SIPIA", "nome": "Jerry Lavelle Oliveira Lima", "matricula": "30987-5", "origem": "Marcado como SIM"}, {"setor": "Coordenação Técnica Municipal do SIPIA", "nome": "João Vitor Silva Novais", "matricula": "30855-0", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Defesa dos Direitos da Criança e do Adolescente", "nome": "Elaine Cristina Fontes Melo", "matricula": "30911-5", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Defesa dos Direitos da Criança e do Adolescente", "nome": "Jerry Lavelle Oliveira Lima", "matricula": "30987-5", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Gestão do SUAS", "nome": "Lucas Caires Santos", "matricula": "30988-8", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Manutenção, Zeladoria e Logistica", "nome": "Juscelino Aguiar Chaves", "matricula": "31009-5", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Planejamento e Vig. Socioassistencial", "nome": "HADSON DE ASSIS CASTRO SEGUNDO", "matricula": "30934-3", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Planejamento e Vig. Socioassistencial", "nome": "Thayse Andrade Fernandes", "matricula": "30760-5", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Políticas de Promoção da Cidadania e Direitos de LGBTQIAPN+", "nome": "Alenice Moreira Nunes", "matricula": "02566-8", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Políticas de Promoção da Cidadania e Direitos de LGBTQIAPN+", "nome": "Anderson Santos Rocha", "matricula": "31004-4", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Políticas de Promoção da Cidadania e Direitos de LGBTQIAPN+", "nome": "Andressa Chagas Neres", "matricula": "19584-2", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Políticas de Promoção da Cidadania e Direitos de LGBTQIAPN+", "nome": "Vitor Otávio Santos dos Anjos", "matricula": "30887-3", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Políticas e Promoção da Família", "nome": "Roberto Dias da Silva", "matricula": "31004-8", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Programas, Projetos Habitacionais, Assistência e Assessoria Técnica", "nome": "Celena Varanese Neri Santos", "matricula": "24108-1", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Programas, Projetos Habitacionais, Assistência e Assessoria Técnica", "nome": "Gisele Calazans da Silva", "matricula": "30884-2", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Programas, Projetos Habitacionais, Assistência e Assessoria Técnica", "nome": "Samuel Azevedo da Paixão", "matricula": "30875-0", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Programas, Projetos Habitacionais, Assistência e Assessoria Técnica", "nome": "Tânia Costa Silva", "matricula": "15247-7", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Programas, Projetos Habitacionais, Assistência e Assessoria Técnica", "nome": "Yasmim Chaves de Santana", "matricula": "30985-3", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Promoção da Igualdade Racial", "nome": "Alenice Moreira Nunes", "matricula": "02566-8", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Promoção da Igualdade Racial", "nome": "Ricardo Alves de Oliveira", "matricula": "24884-9", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Promoção da Igualdade Racial", "nome": "jaqueline Marinho Santos", "matricula": "24819-2", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Proteção Social Básica", "nome": "Dayana Evelinne Andrade dos Santos Araujo", "matricula": "30629-7", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Proteção Social Básica", "nome": "Douglas Soares Santos", "matricula": "30886-2", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Proteção Social Básica", "nome": "Letícia Oliveira Sumes", "matricula": "15109-8", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Proteção Social Básica  -  SUAS NA COMUNIDADE", "nome": "Laís Narjara dos Santos Pinheiro Senna", "matricula": "24110-7", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Proteção Social Especial de Alta Complexidade", "nome": "Beatriz Marques de Jesus", "matricula": "30547-2", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Proteção Social Especial de Alta Complexidade", "nome": "Bruna Oliveira Dias Novaes", "matricula": "30921-9", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Proteção Social Especial de Alta Complexidade", "nome": "FERNANDA BRITO DA SILVA", "matricula": "31008-5", "origem": "Inclusão via Observação"}, {"setor": "Coordenação de Proteção Social Especial de Alta Complexidade", "nome": "Iana Oliveira Batista", "matricula": "30627-4", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Proteção Social Especial de Alta Complexidade", "nome": "João Augusto Martins da Silva", "matricula": "30676-7", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Proteção Social Especial de Alta Complexidade", "nome": "LOIZE SANTOS TEIXEIRA", "matricula": "30936-4", "origem": "Inclusão via Observação"}, {"setor": "Coordenação de Proteção Social Especial de Alta Complexidade", "nome": "Suzana Silva Santos Bastos França", "matricula": "30847-1", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Proteção Social Especial de Alta Complexidade", "nome": "Tainá Alves de Oliveira Peixoto", "matricula": "30867-1", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Proteção Social Especial de Média Complexidade", "nome": "Bruna Oliveira Dias Novaes", "matricula": "30921-9", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Proteção Social Especial de Média Complexidade", "nome": "Cassia Lucena Gusmão", "matricula": "31005-0", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Proteção Social Especial de Média Complexidade", "nome": "Gabriel Anunciação da Silva", "matricula": "30993-1", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Regularização e Legalização Fundiária", "nome": "Carlos Roberto Peçanha", "matricula": "30757-7", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Regularização e Legalização Fundiária", "nome": "Fernando Oliveira Nascimento", "matricula": "30887-0", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Renda e Cidadania", "nome": "Gabriela Novais Santos", "matricula": "30992-6", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Renda e Cidadania", "nome": "MAGNO AGUIAR NOGUEIRA", "matricula": "30933-7", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Renda e Cidadania", "nome": "Talita Eduarda Ferreira de Oliveira", "matricula": "30934-6", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Segurança Alimentar e Nutricional", "nome": "Dernival Araújo de Lima", "matricula": "14894-1", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Segurança Alimentar e Nutricional", "nome": "FILIPE MATEUS OLIVEIRA SANTOS", "matricula": "31004-1", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Segurança Alimentar e Nutricional", "nome": "Karine Barros Rodrigues", "matricula": "24439-2", "origem": "Marcado como SIM"}, {"setor": "Coordenação de Segurança Alimentar e Nutricional", "nome": "Ricardo Silva Moura", "matricula": "23904-1", "origem": "Marcado como SIM"}, {"setor": "Coordenação dos Direitos da Pessoa com Deficiência e Idosa", "nome": "Márcio Higino Meira de Melo", "matricula": "31010-4", "origem": "Marcado como SIM"}, {"setor": "DAF - Diretoria Administrativa, Financeira e Contábil", "nome": "Edilene Rocha Carmo", "matricula": "30841-4", "origem": "Marcado como SIM"}, {"setor": "DAF - Diretoria Administrativa, Financeira e Contábil", "nome": "Joabe Silva Oliveira", "matricula": "30987-6", "origem": "Marcado como SIM"}, {"setor": "Diretoria de Assistência Social", "nome": "Heloisa Cintra Alves Pinto", "matricula": "30903-6", "origem": "Marcado como SIM"}, {"setor": "Diretoria de Assistência Social", "nome": "Irlane Gomes de Carvalho", "matricula": "30986-8", "origem": "Marcado como SIM"}, {"setor": "Diretoria de Assistência Social", "nome": "Samuel Alves da Silva dos Santos", "matricula": "30934-5", "origem": "Marcado como SIM"}, {"setor": "Diretoria de Habitação de Interesse Social", "nome": "Aline Santos da Costa Pires", "matricula": "02921-3", "origem": "Marcado como SIM"}, {"setor": "Diretoria de Habitação de Interesse Social", "nome": "JOSENILDO FREITAS NASCIMENTO", "matricula": "30988-1", "origem": "Marcado como SIM"}, {"setor": "Diretoria de Habitação de Interesse Social", "nome": "ROSELI AMARAL BRITO", "matricula": "30974-0", "origem": "Marcado como SIM"}, {"setor": "Família Acolhedora", "nome": "Afonso Fontes Dutra", "matricula": "30991-6", "origem": "Marcado como SIM"}, {"setor": "Família Acolhedora", "nome": "Jislaine Dutra dos Santos", "matricula": "30991-0", "origem": "Marcado como SIM"}, {"setor": "Família Acolhedora", "nome": "Jussara Teixeira Caldas", "matricula": "A informar", "origem": "Inclusão via Observação"}, {"setor": "Gabinete do Secretário", "nome": "Augusto Jorge José Leal", "matricula": "24693-3", "origem": "Marcado como SIM"}, {"setor": "Gabinete do Secretário", "nome": "DENIS MÁRCIO JESUS OLIVEIRA", "matricula": "30736-2", "origem": "Marcado como SIM"}, {"setor": "Gabinete do Secretário", "nome": "Felipe Coelho Ferreira", "matricula": "30936-3", "origem": "Marcado como SIM"}, {"setor": "Gabinete do Secretário", "nome": "Juliane Vasconcelos de Souza", "matricula": "A informar", "origem": "Inclusão via Observação"}, {"setor": "Gabinete do Secretário", "nome": "Michael Farias Alencar Lima", "matricula": "24545-3", "origem": "Marcado como SIM"}, {"setor": "Gabinete do Secretário", "nome": "Moabson Alves Braga Santos", "matricula": "30847-3", "origem": "Marcado como SIM"}, {"setor": "Gerencia de Almoxarifado e Logistica", "nome": "Faique Ribeiro Lima", "matricula": "30993-2", "origem": "Marcado como SIM"}, {"setor": "Gerencia de Almoxarifado e Logistica", "nome": "Marcos Paulo Gomes Cairo", "matricula": "30998-6", "origem": "Marcado como SIM"}, {"setor": "Gerencia de Manutenção Predial", "nome": "Rizia Lorane Gonçalves Rodrigues", "matricula": "31010-6", "origem": "Marcado como SIM"}, {"setor": "Gerencia de Manutenção Predial", "nome": "Robert Viana Sampaio", "matricula": "31007-8", "origem": "Marcado como SIM"}, {"setor": "Gerência de Administração de Pessoal", "nome": "Elaine Magda Alves Silva", "matricula": "30997-5", "origem": "Marcado como SIM"}, {"setor": "Gerência de Alta Complexidade", "nome": "Arielle Limeira Moreira", "matricula": "30703-4", "origem": "Marcado como SIM"}, {"setor": "Gerência de Alta Complexidade", "nome": "Jacqueline Correia Primo", "matricula": "31008-6", "origem": "Marcado como SIM"}, {"setor": "Gerência de Apoio Técnico e Assessoramento à Rede Socioassistencial Privada", "nome": "Marcelo Almeida Góes", "matricula": "24422-9", "origem": "Marcado como SIM"}, {"setor": "Gerência de Assistência e Assessoria Técnica", "nome": "TAISSY GUIMARÃES DE SOUZA", "matricula": "30974-0", "origem": "Marcado como SIM"}, {"setor": "Gerência de Benefícios Socioassistenciais e Eventuais", "nome": "Adriana Oliveira Pedreira Santos", "matricula": "15236-1", "origem": "Marcado como SIM"}, {"setor": "Gerência de Benefícios Socioassistenciais e Eventuais", "nome": "Aldair França Floes", "matricula": "24706-1", "origem": "Marcado como SIM"}, {"setor": "Gerência de Cadastro Único e Bolsa Família", "nome": "Veralucia Lopes dos Santos", "matricula": "31007-2", "origem": "Inclusão via Observação"}, {"setor": "Gerência de Enfrentamento à Violência e Desafios Sociais no Âmbito Familiar", "nome": "Marli dos Santos Cruz Silva", "matricula": "30989-7", "origem": "Marcado como SIM"}, {"setor": "Gerência de Gestão do Trabalho e Educação Permanente", "nome": "Dan Kaio Souza Lemos", "matricula": "30985-8", "origem": "Inclusão via Observação"}, {"setor": "Gerência de Média Complexidade", "nome": "Fernanda Brito da Silva", "matricula": "31008-5", "origem": "Marcado como SIM"}, {"setor": "Gerência de Média Complexidade", "nome": "Loize Santos Teixeira", "matricula": "30936-4", "origem": "Marcado como SIM"}, {"setor": "Gerência de Programas, Projetos, Apoio ao Mutuário e Acompanhamento Social", "nome": "JOSE HIGINO DUQUE DO PRADO", "matricula": "31002-6", "origem": "Marcado como SIM"}, {"setor": "Gerência de Programas, Projetos, Apoio ao Mutuário e Acompanhamento Social", "nome": "Jeferson Miranda Moura", "matricula": "31038-8", "origem": "Marcado como SIM"}, {"setor": "Gerência de Promoção dos Direitos das Pessoas com Deficiência", "nome": "Karoline Rodrigues Quaresma", "matricula": "31005-4", "origem": "Marcado como SIM"}, {"setor": "Gerência de Promoção dos Direitos das Pessoas Idosas", "nome": "Kelly Patrícia Newton Almeida Silva", "matricula": "30988-6", "origem": "Marcado como SIM"}, {"setor": "Gerência de Regularização e Legalização Fundiária", "nome": "Cássia Sá Rocha Araújo", "matricula": "30985-5", "origem": "Marcado como SIM"}, {"setor": "Gerência de Relação com os Sistemas de Garantia de Direitos e de Justiça", "nome": "Amanda Gonzaga de Oliveira", "matricula": "31017-5", "origem": "Marcado como SIM"}, {"setor": "Gerência de Relação com os Sistemas de Garantia de Direitos e de Justiça", "nome": "Brenno Soares França", "matricula": "31006-5", "origem": "Marcado como SIM"}, {"setor": "Gerência de Relação com os Sistemas de Garantia de Direitos e de Justiça", "nome": "Gabriela Santos Lima", "matricula": "24656-9", "origem": "Marcado como SIM"}, {"setor": "Gerência de Relação com os Sistemas de Garantia de Direitos e de Justiça", "nome": "Satyananda Samara Costa Carneiro Vaz", "matricula": "30764-6", "origem": "Marcado como SIM"}, {"setor": "Gerência de Trabalho Técnico Social e Mobilização", "nome": "MARILIA CAIRES CONTE", "matricula": "30867-8", "origem": "Inclusão via Observação"}, {"setor": "Gerência de Trabalho Técnico Social e Mobilização", "nome": "Roberto Paulo Souza dos Santos", "matricula": "30989-8", "origem": "Marcado como SIM"}, {"setor": "Núcleo de Tecnologia da Informação", "nome": "JOSEMAR BRAGA LUZ", "matricula": "24893-2", "origem": "Inclusão via Observação"}, {"setor": "Núcleo de Tecnologia da Informação", "nome": "LAIZA KEVELLY PEREIRA NOLASCO DA SILVA", "matricula": "30840-9", "origem": "Marcado como SIM"}, {"setor": "Núcleo de Tecnologia da Informação", "nome": "LAZARO DE CARVALHO SANTOS", "matricula": "A informar", "origem": "Inclusão via Observação"}, {"setor": "Núcleo de Tecnologia da Informação", "nome": "ROBÉRIO SANTOS DE BRITO", "matricula": "30774-0", "origem": "Marcado como SIM"}, {"setor": "Prefeitas e Prefeitos Amigos da Criança", "nome": "Jerry Lavelle Oliveira Lima", "matricula": "30595-4", "origem": "Marcado como SIM"}, {"setor": "Programa de Erradicação do Trabalho Infantil (PETI)", "nome": "Ana Flávia dos Anjos Santana", "matricula": "31003-2", "origem": "Marcado como SIM"}, {"setor": "Programa de Erradicação do Trabalho Infantil (PETI)", "nome": "Stephanie Chaves de Lima", "matricula": "30961-0", "origem": "Marcado como SIM"}, {"setor": "Proteção Social Básica - ACESSUAS Trabalho", "nome": "Mateus Macedo Honório", "matricula": "A informar", "origem": "Inclusão via Observação"}, {"setor": "Proteção Social Básica – PIS-Programa Primeira Infância no SUAS", "nome": "Franklin Rocha Silva", "matricula": "A informar", "origem": "Inclusão via Observação"}, {"setor": "Proteção Social Básica – PIS-Programa Primeira Infância no SUAS", "nome": "Rozilda Almeida Neves Magalhães", "matricula": "A informar", "origem": "Inclusão via Observação"}, {"setor": "Proteção Social Básica - Gerência de Gestão dos Serviços, Programas, Projetos e Benefícios de PSB", "nome": "Simone Maximo Peles", "matricula": "31004-6", "origem": "Marcado como SIM"}, {"setor": "Selo UNICEF", "nome": "Jerry Lavelle Oliveira Lima", "matricula": "30595-4", "origem": "Marcado como SIM"}, {"setor": "Selo UNICEF", "nome": "Laís Narjara dos Santos Pinheiro Senna", "matricula": "24110-7", "origem": "Marcado como SIM"}, {"setor": "Serviço Especializado em Abordagem Social", "nome": "Valdineia Aragão dos Santos", "matricula": "30985-6", "origem": "Marcado como SIM"}, {"setor": "Setor de Gestão de Pessoas", "nome": "Cláudia Márcia Leite Oliveira", "matricula": "15333-3", "origem": "Marcado como SIM"}, {"setor": "Setor de Gestão de Pessoas", "nome": "Elder Luiz Pires Silva", "matricula": "30788-2", "origem": "Marcado como SIM"}, {"setor": "Setor de Gestão de Pessoas", "nome": "Igor Roger Lima Andrade", "matricula": "30939-5", "origem": "Marcado como SIM"}, {"setor": "Setor de Gestão de Pessoas", "nome": "Tâmara Silva de Almeida", "matricula": "19824-8", "origem": "Marcado como SIM"}, {"setor": "Unidade Municipal de Acolhimento Institucional para Mulheres - Casa Rosa", "nome": "Sabrina Fernandes Igino Lima", "matricula": "30989-2", "origem": "Marcado como SIM"}, {"setor": "Unidade de Acolhimento", "nome": "Eder de Jesus Santos", "matricula": "30931-0", "origem": "Marcado como SIM"}, {"setor": "Unidade de Acolhimento", "nome": "Regina de Deus Lima Alves", "matricula": "30990-1", "origem": "Marcado como SIM"}], "excluidos": [{"setor": "ADICIONAR", "nome": "Zenilson Ricardo Correia Soares", "matricula": "24139-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Acolhendo e Cuidando", "nome": "Darlene Santos da Silva", "matricula": "30936-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Acolhendo e Cuidando", "nome": "Joseane Maria de Almeida", "matricula": "30635-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "Mércia Cristina Andrade Dias", "matricula": "4158", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "Rogério Araken Vieira Santos", "matricula": "19916-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "COF - Coordenação Orçamentária, Financeira e Contábil", "nome": "Solange Auxiliadora Murta Silva", "matricula": "02686-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "COF - Gerência de Execução Orçamentária", "nome": "LIVIA LACERDA LIMA", "matricula": "30628-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "COF - Gerência de Execução Orçamentária", "nome": "Rogério Araken Vieira Santos", "matricula": "19916-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "COF - Gerência de Execução Orçamentária", "nome": "Solange Auxiliadora Murta Silva", "matricula": "02686-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "COF - Gerência de Gestão de Parcerias", "nome": "Adriana Alves Lemos", "matricula": "14251-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "COF - Gerência de Gestão de Parcerias", "nome": "Felisbelo Vilaça de Assunção Neto", "matricula": "30627-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "COF - Gerência de Gestão de Parcerias", "nome": "Mércia Cristina Andrade Dias", "matricula": "4158", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "COF - Gerência de Gestão de Parcerias", "nome": "servidor teste", "matricula": "00000-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "COF - Gerência de Tesouraria e Contabilidade", "nome": "LEANDRO AGUIAR VILASBOAS", "matricula": "30841-1", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 1 - Bruno Bacelar", "nome": "Bruna Manuelli Lima Ferraz", "matricula": "24147-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 1 - Bruno Bacelar", "nome": "Elizeu Reis Santos", "matricula": "15292-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 1 - Bruno Bacelar", "nome": "Maria Rejane Silva Dantas", "matricula": "14249-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 1 - Bruno Bacelar", "nome": "Wilma Celia Souza de Almeida", "matricula": "24148-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 2 - Vila América", "nome": "Irian de Oliveira Bitencourt", "matricula": "30764-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 2 - Vila América", "nome": "Neidy Valéria Oliveira Figueredo Narrucht", "matricula": "22678-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 2 - Vila América", "nome": "Paloma Pedreira Ribeiro", "matricula": "15235-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 2 - Vila América", "nome": "Paulo Henrique Barbosa Martins", "matricula": "24143-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 2 - Vila América", "nome": "Sara Rocha Varges Cordeiro", "matricula": "19342-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 2 - Vila América", "nome": "Zelia Maria Silveira Rios da Hora", "matricula": "15246-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 3 - Pedrinhas", "nome": "LAISA ARAUJO GAMA DUARTE", "matricula": "24885-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 3 - Pedrinhas", "nome": "Luciana Baleeiro Santos", "matricula": "30993-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 4 - Jardim Valéria", "nome": "Valdinéia Aragão dos Santos", "matricula": "30730-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Camila Silva Flores", "matricula": "24107-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Diego Sousa Bispo", "matricula": "15290-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Dirllan Borges da Silva", "matricula": "24107-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Gracianny Bittencourt Machado", "matricula": "15281-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Jacineide Alves de Novaes", "matricula": "17458-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Lucas de Jesus Lima", "matricula": "16444-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Maiana Benjamim da Silva Viana", "matricula": "24105-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Marilda Silva Souto Maior", "matricula": "24147-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Matheus Barros Sousa", "matricula": "19748-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Naiane Andrade Santos", "matricula": "24106-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Rafael da Silva Nunes", "matricula": "19892-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Roberto Lima Santos", "matricula": "11683-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Romulo Dias dos Santos Rocha", "matricula": "24106-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Scheilla Deysianne Andrade de Jesus", "matricula": "15241-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Simône Nascimento Carvalho", "matricula": "16740-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Solange Borges Teixeira", "matricula": "24110-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 5 - Intinerante", "nome": "Valdete Alves de Oliveira", "matricula": "24412-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 6 - Nova Cidade", "nome": "Denise Viana Silva", "matricula": "24132-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 7 - Nossa Senhora Aparecida", "nome": "Charlene Pereira Barreto", "matricula": "30933-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 8 - Miro Cairo", "nome": "Liliane Soares Moreira", "matricula": "24204-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 8 - Miro Cairo", "nome": "Marluce Sobral Assis", "matricula": "06799-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 8 - Miro Cairo", "nome": "Priscila da Silva Rodrigues", "matricula": "19097-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CRAS 8 - Miro Cairo", "nome": "Sandra Reis Matias", "matricula": "24111-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CREAS CIDCA", "nome": "Mara Caruline Souza Oliveira", "matricula": "30991-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CREAS Central", "nome": "Daiane Santos Costa", "matricula": "15320-1", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CREAS Central", "nome": "Glauber Magalhães Marques", "matricula": "30936-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CREAS Central", "nome": "Hilda Silva Arruda de Moura Vilas Boas", "matricula": "24597-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CREAS Central", "nome": "Simone Pereira dos Santos", "matricula": "24574-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CREAS Central", "nome": "Tainá Alves de Oliveira Peixoto", "matricula": "24898-1", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CREAS Novo Olhar", "nome": "Bárbara Tigre Rocha", "matricula": "24451-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CREAS Novo Olhar", "nome": "Jacqueline Correia Primo", "matricula": "30987-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CREAS Novo Olhar", "nome": "Kátia Cristina Amaral Sousa Matos", "matricula": "24899-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CREAS Novo Olhar", "nome": "Naete Xavier Ruas Cruz", "matricula": "30586-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CREAS Novo Olhar", "nome": "Patiane Pereira Santos de Oliveira", "matricula": "14835-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "CREAS Rural José Gonçalves", "nome": "Jorgeane Silva de Oliveira", "matricula": "30987-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Centro POP Adulto", "nome": "Carlos Pereira Silva", "matricula": "24893-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Centro POP Adulto", "nome": "Mailza Leite Monteiro Aragão", "matricula": "30989-1", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Centro POP Adulto", "nome": "Vitor Clímaco de Melo", "matricula": "24900-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Centro POP Criança e Adolescente", "nome": "Ben-Hur Cardoso Santana", "matricula": "30676-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Centro de Convivência da Pessoa Idosa", "nome": "Gislane Cardoso da Silva Oliveira", "matricula": "24816-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Municipal da Diversidade Sexual e de Gênero", "nome": "Anderson Santos Rocha", "matricula": "31004-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Municipal de Assistência Social", "nome": "Karoline Rodrigues Quaresma", "matricula": "31005-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Municipal de Assistência Social", "nome": "Matheus Barros Sousa", "matricula": "19748-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Municipal do Idoso", "nome": "Fatima Inês Silva Romão dos Santos", "matricula": "14591-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 01", "nome": "Alesandra Alves da Silva", "matricula": "02506-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 01", "nome": "Dayane Santiago Costa", "matricula": "30602-1", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 01", "nome": "Izabela Almeida Oliveira", "matricula": "30602-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 01", "nome": "Jeane Meira Oliveira", "matricula": "30602-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 01", "nome": "Naelza Brito dos Santos", "matricula": "30602-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 01", "nome": "Wallas Pinto Dos Santos", "matricula": "30601-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 02", "nome": "Gilmara Dos Anjos Silva Sousa", "matricula": "30601-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 02", "nome": "Letícia Prado Souza Gomes", "matricula": "30601-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 02", "nome": "Mickelle Xavier Santos", "matricula": "30601-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 02", "nome": "Poliane Santos Sousa de Santana", "matricula": "30601-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 03", "nome": "Andrea Silva Novaes", "matricula": "30750-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 03", "nome": "Beatriz Galvão Santana", "matricula": "30720-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 03", "nome": "Fernanda Silva da Cruz", "matricula": "30721-1", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona 03", "nome": "Sheily Santos Nascimento", "matricula": "30721-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona Rural", "nome": "Adriano Pires da Silva", "matricula": "30546-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona Rural", "nome": "Jocione Fonseca Prado", "matricula": "30601-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona Rural", "nome": "Maria Betania Vieira Santos", "matricula": "30601-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona Rural", "nome": "Simone Moreira de Moraes Hori", "matricula": "30602-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Conselho Tutelar Zona Rural", "nome": "Tainá Dias Lima", "matricula": "30728-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Alexsandro da Silva Cardoso", "matricula": "06663-1", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Antônio Gilton Barros Viterbo", "matricula": "15106-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Camille de Jesus Borges Silva", "matricula": "30915-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Clauber Teixeira da Silva", "matricula": "30702-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Daniel Fernandes Barbosa Magalhães", "matricula": "31007-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Dulcineia Carvalho de Oliveira", "matricula": "14272-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "ESDRAS SANTOS PRADO", "matricula": "24111-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Franco Vieira Batista", "matricula": "30676-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Gabriel Almeida de Andrade", "matricula": "30500-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Gabriel Araújo Souza", "matricula": "30890-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Gustavo Soares Barreto", "matricula": "24366-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Hercília de Araújo Braga", "matricula": "30584-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Ian Silva de Andrade", "matricula": "30840-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Jackson Cleber Amaral Santos", "matricula": "21043-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Jessica Rocha Gomes", "matricula": "30841-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Josemar Braga Luz", "matricula": "24893-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Josemar Rosa Senna", "matricula": "15264-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "João da Paz de Souza Vieira", "matricula": "30916-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Lilian de Jesus Dias Morais", "matricula": "24889-1", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Livia Lacerda Lima", "matricula": "30628-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Lázaro de Carvalho Santos", "matricula": "30772-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Marcus Vinícius Nascimento da Silva", "matricula": "24458-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Marina Paiva Santos", "matricula": "30840-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Mayra Lima dos Anjos Souza", "matricula": "30628-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "ORLANDO PRADO MARTINS", "matricula": "15230-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Pedro Antônio Damascena de Freitas", "matricula": "30786-1", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Talyssa Casal Rosemberg Mendes", "matricula": "31001-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Tatyane Chaves Moreira", "matricula": "31007-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Vanusa Oliveira Macedo", "matricula": "71319-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação Administrativa", "nome": "Zenilson Ricardo Correia Soares", "matricula": "24139-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Gestão de Pessoas", "nome": "GERLAN SILVA SOUZA", "matricula": "30997-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Gestão do SUAS", "nome": "Dan Kaio Souza Lemos", "matricula": "30940-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Gestão do SUAS", "nome": "Liliane dos Santos Oliveira", "matricula": "30627-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Gestão do SUAS", "nome": "Raniele Carvalho Rocha", "matricula": "30994-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Planejamento e Vig. Socioassistencial", "nome": "Lucas Caires Santos", "matricula": "30759-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Programas, Projetos Habitacionais, Assistência e Assessoria Técnica", "nome": "José Higino Duque do Prado", "matricula": "24889-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Programas, Projetos Habitacionais, Assistência e Assessoria Técnica", "nome": "MARILIA CAIRES CONTE", "matricula": "30867-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Programas, Projetos Habitacionais, Assistência e Assessoria Técnica", "nome": "Taissy Guimarães de Souza", "matricula": "30974-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Programas, Projetos Habitacionais, Assistência e Assessoria Técnica", "nome": "VALDENILDE SANTOS BRITO", "matricula": "24665-1", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Programas, Projetos Habitacionais, Assistência e Assessoria Técnica", "nome": "VALQUIRIA DE CARVALHO LEITE", "matricula": "30962-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Promoção da Igualdade Racial", "nome": "Lindinalva Rodrigues Araújo", "matricula": "03847-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Promoção da Igualdade Racial", "nome": "Maria Esther Pereira Flick", "matricula": "30595-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Promoção da Igualdade Racial", "nome": "Maria Olinda Pereira de Sousa", "matricula": "00949-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Proteção Social Básica", "nome": "Anaete Ferreira dos Santos", "matricula": "24777-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Proteção Social Básica", "nome": "Joelma Santiago Freire", "matricula": "24703-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Proteção Social Especial de Alta Complexidade", "nome": "Arielle Limeira Moreira", "matricula": "30703-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Regularização e Legalização Fundiária", "nome": "Elaine Ribeiro Sousa", "matricula": "16443-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Renda e Cidadania", "nome": "ANNA CLARA MACÊDO DOS SANTOS", "matricula": "30702-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Renda e Cidadania", "nome": "Alba Renata Lima Barros", "matricula": "15961-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Renda e Cidadania", "nome": "CAROLINA FERNANDES RIBEIRO", "matricula": "24475-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Renda e Cidadania", "nome": "CÍNTIA SANTOS CARLOS", "matricula": "24475-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Renda e Cidadania", "nome": "LAISA ARAUJO GAMA DUARTE", "matricula": "24407-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Renda e Cidadania", "nome": "LUCICLÉIA RIBEIRO DE OLIVEIRA QUEIROZ DE OLIVEIRA", "matricula": "30676-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Renda e Cidadania", "nome": "Marce Eria Correia Silva", "matricula": "24476-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Renda e Cidadania", "nome": "Maria Esther Pereira Flick", "matricula": "24571-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Renda e Cidadania", "nome": "NATALIA SOUZA PAES SANTOS", "matricula": "24816-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Coordenação de Renda e Cidadania", "nome": "Veralucia Lopes dos Santos", "matricula": "31007-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Diretoria de Assistência Social", "nome": "Thayse Andrade Fernandes", "matricula": "30760-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Diretoria de Habitação de Interesse Social", "nome": "Ana Carolina Macalos Carpes", "matricula": "30537-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Diretoria de Habitação de Interesse Social", "nome": "DIEGO GOMES ROCHA", "matricula": "14049-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Diretoria de Habitação de Interesse Social", "nome": "FLÁVIO AFONSO ALVES LEITE BARTOLI", "matricula": "24894-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Diretoria de Habitação de Interesse Social", "nome": "Herley Lima Costa Fortunato", "matricula": "31006-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Diretoria de Habitação de Interesse Social", "nome": "Isac Oliveira de  França", "matricula": "24187-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Diretoria de Habitação de Interesse Social", "nome": "Vinícius Silva Passos", "matricula": "30946-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Família Acolhedora", "nome": "Bluma Assis Dutra Leite Pereira", "matricula": "30615-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Família Acolhedora", "nome": "Maria Betania Vieira Santos", "matricula": "24709-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Família Acolhedora", "nome": "Marli dos Santos Cruz Silva", "matricula": "30759-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gabinete do Secretário", "nome": "NATALIA DA SILVA SANTOS", "matricula": "30914-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Alta Complexidade", "nome": "MAGNUM BORGES REZENDE", "matricula": "30989-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Alta Complexidade", "nome": "Wadson Botelho Ribeiro", "matricula": "24106-1", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Apoio Técnico e Assessoramento à Rede Socioassistencial Privada", "nome": "Keith Andresse Gusmão Zuba", "matricula": "30549-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Cadastro Único e Bolsa Família", "nome": "Jaci Rozana Menezes Viana", "matricula": "30933-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Cadastro Único e Bolsa Família", "nome": "Marilda Simone de Novais Santos", "matricula": "24002-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Gestão do Trabalho e Educação Permanente", "nome": "Keith Andresse Gusmão Zuba", "matricula": "30549-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Monitoramento e Avaliação", "nome": "Rogério Gusmão do Carmo", "matricula": "30595-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Média Complexidade", "nome": "Daniele Sousa Portela", "matricula": "30675-2", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Média Complexidade", "nome": "Ivanete Amaral de Novais Rodrigues", "matricula": "24597-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Média Complexidade", "nome": "Jacqueline Correia Primo", "matricula": "30987-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Média Complexidade", "nome": "Milena Meireles Souza", "matricula": "30497-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Média Complexidade", "nome": "Tainá Alves de Oliveira Peixoto", "matricula": "24411-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Relação com os Sistemas de Garantia de Direitos e de Justiça", "nome": "Leila Carla Sousa Santos", "matricula": "30628-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Gerência de Relação com os Sistemas de Garantia de Direitos e de Justiça", "nome": "Luana Rocha Martinelli", "matricula": "24548-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Programa de Erradicação do Trabalho Infantil (PETI)", "nome": "Carine Oliveira Aragão Silva", "matricula": "24893-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Programa de Erradicação do Trabalho Infantil (PETI)", "nome": "Fatima Inês Silva Romão dos Santos", "matricula": "14591-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Programa de Erradicação do Trabalho Infantil (PETI)", "nome": "Monaliza Cirino de Oliveira", "matricula": "24150-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Programa de Erradicação do Trabalho Infantil (PETI)", "nome": "Soane da Silva Núlia", "matricula": "24816-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Proteção Social Básica - ACESSUAS Trabalho", "nome": "Alana Leite Moreira Alves", "matricula": "24704-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Proteção Social Básica - ACESSUAS Trabalho", "nome": "Anaete Ferreira dos Santos Lima", "matricula": "24777-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Proteção Social Básica - ACESSUAS Trabalho", "nome": "Déborah Neres Oliveira", "matricula": "30962-6", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Proteção Social Básica - ACESSUAS Trabalho", "nome": "Jacqueline Correia Primo", "matricula": "30987-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Proteção Social Básica - ACESSUAS Trabalho", "nome": "Lesley Michele Marques de Mendonça", "matricula": "24597-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Proteção Social Básica – PIS-Programa Primeira Infância no SUAS", "nome": "Camila Oliveira Souza", "matricula": "30961-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Proteção Social Básica – PIS-Programa Primeira Infância no SUAS", "nome": "Gilmara Novais Silva", "matricula": "24531-5", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Proteção Social Básica – PIS-Programa Primeira Infância no SUAS", "nome": "Luciene Mendes Bispo", "matricula": "57524-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Proteção Social Básica – PIS-Programa Primeira Infância no SUAS", "nome": "Mariana Batista de Moraes", "matricula": "30551-1", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Selo UNICEF", "nome": "Laís Narjara dos Santos Pinheiro", "matricula": "24110-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Serviço Especializado em Abordagem Social", "nome": "Gilmara Novais Silva", "matricula": "30730-4", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Setor de Gestão de Pessoas", "nome": "Jorge Fernando dos Humildes Neto", "matricula": "30751-1", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Unidade Municipal de Acolhimento Institucional para Mulheres - Casa Rosa", "nome": "Cleonice Aragão Araújo", "matricula": "30757-9", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Unidade Municipal de Acolhimento Institucional para Mulheres - Casa Rosa", "nome": "Cleunice Oliveira dos Santos", "matricula": "30595-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Unidade Municipal de Acolhimento Institucional para Mulheres - Casa Rosa", "nome": "Jislaine Dutra dos Santos", "matricula": "30849-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Unidade de Acolhimento", "nome": "Manoela Soares Vieira Gomes Guimarães", "matricula": "30989-3", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Unidade de Acolhimento", "nome": "Sabrina Fernandes Igino Lima", "matricula": "30837-0", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Unidade de Acolhimento", "nome": "Tarcisio de Almeida Teixeira", "matricula": "30587-7", "motivo": "Marcado como NÃO (Saída / Não migra)"}, {"setor": "Unidade de Acolhimento", "nome": "Victor Moreira Barreto de Souza", "matricula": "19645-8", "motivo": "Marcado como NÃO (Saída / Não migra)"}], "mudancas": [{"setor_gep": "Assessoria Especial 1", "alteracao": "Assessoria Especial", "categoria": "Renomeação / Reestruturação"}, {"setor_gep": "Centro de Convivência da Pessoa Idosa", "alteracao": "CCPI - Centro de Convivência da Pessoa Idosa", "categoria": "Renomeação / Reestruturação"}, {"setor_gep": "Coordenação de Proteção Social Especial", "alteracao": "EXCLUIR A CAIXA, POIS A COORDENAÇÃO SE DIVIDIU EM DUAS, COORDENEAÇÃO DE PROTEÇÃO SOCIAL ESPECIAL DE ALTA COMPLEXIDADE E COORDENEAÇÃO DE PROTEÇÃO SOCIAL ESPECIAL DE MÉDIA COMPLEXIDADE", "categoria": "Exclusão de Caixa"}, {"setor_gep": "COORDENAÇÃO DO CENTRO DE CONVIVÊNCIA CONQUISTA CRIANÇA", "alteracao": "Excluir, pois agora se chama CRAS IX", "categoria": "Exclusão de Caixa"}, {"setor_gep": "Diretoria de Assistência Social", "alteracao": "Alterar para DAS - Diretoria de Assistência Social", "categoria": "Renomeação / Reestruturação"}, {"setor_gep": "Diretoria de Habitação de Interesse Social", "alteracao": "DHIS - Diretoria de Habitação de Interesse Social", "categoria": "Renomeação / Reestruturação"}, {"setor_gep": "Gerência Administrativa do Programa Conquista Criança", "alteracao": "EXCLUIR", "categoria": "Exclusão de Caixa"}, {"setor_gep": "Gerência de Cadastro Único e Bolsa Família", "alteracao": "Gerência do Cadastro Unico", "categoria": "Renomeação / Reestruturação"}, {"setor_gep": "Gerência de Média e Alta Complexidade", "alteracao": "EXCLUIR", "categoria": "Exclusão de Caixa"}, {"setor_gep": "Gerência de planejamento e relações institucionais", "alteracao": "EXCLUIR", "categoria": "Exclusão de Caixa"}, {"setor_gep": "Gerência de Programas, Projetos, Apoio ao Mutuário e Acompanhamento Social", "alteracao": "Gerência de Programas, Projetos, Apoio ao Mutuário", "categoria": "Renomeação / Reestruturação"}, {"setor_gep": "Gerência de Sistema de Informações Habitacionais", "alteracao": "EXCLUIR", "categoria": "Exclusão de Caixa"}, {"setor_gep": "Gerente de Zeladoria e Logística", "alteracao": "EXCLUIR", "categoria": "Exclusão de Caixa"}, {"setor_gep": "Jurídico", "alteracao": "EXCLUIR", "categoria": "Exclusão de Caixa"}, {"setor_gep": "Programa Vivendo a Terceira Idade", "alteracao": "EXCLUIR", "categoria": "Exclusão de Caixa"}, {"setor_gep": "Proteção Social Básica - Gerência de Gestão dos Serviços, Programas, Projetos e Benefícios de PSB", "alteracao": "Gerência de Gestão dos Serviços, Programas, Projetos e Benefícios de PSB", "categoria": "Renomeação / Reestruturação"}, {"setor_gep": "Proteção Social Básica – PIS-Programa Primeira Infância no SUAS", "alteracao": "PIS-Programa Primeira Infância no SUAS", "categoria": "Renomeação / Reestruturação"}, {"setor_gep": "Sala da mulher empreendedora", "alteracao": "excluir", "categoria": "Exclusão de Caixa"}, {"setor_gep": "Secretaria Municipal de Desenvolvimento Social", "alteracao": "excluir", "categoria": "Exclusão de Caixa"}, {"setor_gep": "Setor de Compras, Licitação, Contrato e Convênio", "alteracao": "EXCLUIR", "categoria": "Exclusão de Caixa"}, {"setor_gep": "Setor de Zeladoria e Logística da SEMDES", "alteracao": "EXCLUIR", "categoria": "Exclusão de Caixa"}, {"setor_gep": "ADICIONAR", "alteracao": "Gerencia de compras", "categoria": "Nova Caixa / Mesa"}, {"setor_gep": "ADICIONAR", "alteracao": "Gerencia de Contratos", "categoria": "Nova Caixa / Mesa"}, {"setor_gep": "ADICONAR", "alteracao": "Gerencia de Planejamento e Controle de Compras", "categoria": "Renomeação / Reestruturação"}, {"setor_gep": "ADICIONAR", "alteracao": "Gerência de Programas de Transferência de Renda", "categoria": "Nova Caixa / Mesa"}]};
+
+    const dataIncluidos = rawData.servidores;
+    const dataExcluidos = rawData.excluidos;
+    const dataMudancas = rawData.mudancas;
+
+    // STATE VARIABLES
+    let filteredIncluidos = [...dataIncluidos];
+    let filteredExcluidos = [...dataExcluidos];
+    
+    let currentTab = 'incluidos';
+    let sortIncCol = 1, sortIncAsc = true;
+    let sortExcCol = 1, sortExcAsc = true;
+
+    // INIT
+    document.addEventListener('DOMContentLoaded', () => {
+      populateCaixaDropdowns();
+      sortIncluidosData(1, true);
+      sortExcluidosData(1, true);
+      renderIncluidosTable();
+      renderExcluidosTable();
+      renderMudancasTable();
+    });
+
+    function populateCaixaDropdowns() {
+      const selectInc = document.getElementById('filter-caixa-incluidos');
+      const uniqueInc = [...new Set(dataIncluidos.map(i => i.setor))].sort();
+      uniqueInc.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        selectInc.appendChild(opt);
+      });
+
+      const selectExc = document.getElementById('filter-caixa-excluidos');
+      const uniqueExc = [...new Set(dataExcluidos.map(i => i.setor))].sort();
+      uniqueExc.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        selectExc.appendChild(opt);
+      });
+    }
+
+    // TAB SWITCHING
+    function switchTab(tab) {
+      currentTab = tab;
+      const tabs = ['incluidos', 'excluidos', 'mudancas'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        const content = document.getElementById(`tab-content-${t}`);
+        
+        if (t === tab) {
+          btn.classList.add('active', 'border-b-2', 'font-semibold');
+          btn.classList.remove('border-transparent', 'text-slate-600', 'font-medium');
+          if (t === 'incluidos') btn.classList.add('border-emerald-600', 'text-emerald-800');
+          if (t === 'excluidos') btn.classList.add('border-rose-600', 'text-rose-800');
+          if (t === 'mudancas') btn.classList.add('border-indigo-600', 'text-indigo-800');
+          content.classList.remove('hidden');
+        } else {
+          btn.classList.remove('active', 'border-b-2', 'font-semibold', 'border-emerald-600', 'text-emerald-800', 'border-rose-600', 'text-rose-800', 'border-indigo-600', 'text-indigo-800');
+          btn.classList.add('border-transparent', 'text-slate-600', 'font-medium');
+          content.classList.add('hidden');
+        }
+      });
+    }
+
+    // FILTERS FOR TAB 1 (INCLUÍDOS)
+    function applyFiltersIncluidos() {
+      const search = document.getElementById('search-incluidos').value.toLowerCase().trim();
+      const caixa = document.getElementById('filter-caixa-incluidos').value;
+      const origem = document.getElementById('filter-origem-incluidos').value;
+
+      filteredIncluidos = dataIncluidos.filter(item => {
+        const mSearch = !search || item.nome.toLowerCase().includes(search) || item.matricula.toLowerCase().includes(search) || item.setor.toLowerCase().includes(search);
+        const mCaixa = !caixa || item.setor === caixa;
+        const mOrigem = !origem || item.origem === origem;
+        return mSearch && mCaixa && mOrigem;
+      });
+
+      document.getElementById('count-incluidos').textContent = filteredIncluidos.length;
+      document.getElementById('btn-clear-incluidos').classList.toggle('hidden', search === '' && caixa === '' && origem === '');
+      sortIncluidosData(sortIncCol, false);
+      renderIncluidosTable();
+    }
+
+    function clearFiltersIncluidos() {
+      document.getElementById('search-incluidos').value = '';
+      document.getElementById('filter-caixa-incluidos').value = '';
+      document.getElementById('filter-origem-incluidos').value = '';
+      applyFiltersIncluidos();
+    }
+
+    function sortIncluidos(col) {
+      if (sortIncCol === col) sortIncAsc = !sortIncAsc;
+      else { sortIncCol = col; sortIncAsc = true; }
+      sortIncluidosData(col, true);
+      renderIncluidosTable();
+    }
+
+    function sortIncluidosData(col, updateIcon) {
+      filteredIncluidos.sort((a, b) => {
+        let vA = col === 1 ? a.setor : col === 2 ? a.nome : col === 3 ? a.matricula : a.origem;
+        let vB = col === 1 ? b.setor : col === 2 ? b.nome : col === 3 ? b.matricula : b.origem;
+        const c = vA.localeCompare(vB, 'pt-BR');
+        return sortIncAsc ? c : -c;
+      });
+      if (updateIcon) {
+        for (let i = 0; i <= 4; i++) {
+          const ic = document.getElementById(`sort-inc-${i}`);
+          if (ic) ic.className = 'fa-solid fa-sort ml-1 text-slate-400';
+        }
+        const active = document.getElementById(`sort-inc-${col}`);
+        if (active) active.className = sortIncAsc ? 'fa-solid fa-sort-up ml-1 text-emerald-600' : 'fa-solid fa-sort-down ml-1 text-emerald-600';
+      }
+    }
+
+    function renderIncluidosTable() {
+      const tbody = document.getElementById('tbody-incluidos');
+      tbody.innerHTML = '';
+      filteredIncluidos.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/80';
+        const isObs = item.origem.includes('Observação');
+        const badgeClass = isObs ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-emerald-100 text-emerald-800 border-emerald-200';
+        const icon = isObs ? 'fa-user-plus' : 'fa-check';
+        const label = isObs ? 'Via Observação' : 'Marcado com SIM';
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 text-center text-xs font-semibold text-slate-400 border-r border-slate-100">${index + 1}</td>
+          <td class="py-2.5 px-4 font-medium text-slate-800">${item.setor}</td>
+          <td class="py-2.5 px-4 font-semibold text-slate-900">${item.nome}</td>
+          <td class="py-2.5 px-4 font-mono text-xs text-slate-600">${item.matricula}</td>
+          <td class="py-2.5 px-4 text-center">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${badgeClass}">
+              <i class="fa-solid ${icon} text-[10px]"></i><span>${label}</span>
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // FILTERS FOR TAB 2 (EXCLUÍDOS)
+    function applyFiltersExcluidos() {
+      const search = document.getElementById('search-excluidos').value.toLowerCase().trim();
+      const caixa = document.getElementById('filter-caixa-excluidos').value;
+
+      filteredExcluidos = dataExcluidos.filter(item => {
+        const mSearch = !search || item.nome.toLowerCase().includes(search) || item.matricula.toLowerCase().includes(search) || item.setor.toLowerCase().includes(search);
+        const mCaixa = !caixa || item.setor === caixa;
+        return mSearch && mCaixa;
+      });
+
+      document.getElementById('count-excluidos').textContent = filteredExcluidos.length;
+      document.getElementById('btn-clear-excluidos').classList.toggle('hidden', search === '' && caixa === '');
+      sortExcluidosData(sortExcCol, false);
+      renderExcluidosTable();
+    }
+
+    function clearFiltersExcluidos() {
+      document.getElementById('search-excluidos').value = '';
+      document.getElementById('filter-caixa-excluidos').value = '';
+      applyFiltersExcluidos();
+    }
+
+    function sortExcluidos(col) {
+      if (sortExcCol === col) sortExcAsc = !sortExcAsc;
+      else { sortExcCol = col; sortExcAsc = true; }
+      sortExcluidosData(col, true);
+      renderExcluidosTable();
+    }
+
+    function sortExcluidosData(col, updateIcon) {
+      filteredExcluidos.sort((a, b) => {
+        let vA = col === 1 ? a.setor : col === 2 ? a.nome : a.matricula;
+        let vB = col === 1 ? b.setor : col === 2 ? b.nome : b.matricula;
+        const c = vA.localeCompare(vB, 'pt-BR');
+        return sortExcAsc ? c : -c;
+      });
+      if (updateIcon) {
+        for (let i = 0; i <= 3; i++) {
+          const ic = document.getElementById(`sort-exc-${i}`);
+          if (ic) ic.className = 'fa-solid fa-sort ml-1 text-slate-400';
+        }
+        const active = document.getElementById(`sort-exc-${col}`);
+        if (active) active.className = sortExcAsc ? 'fa-solid fa-sort-up ml-1 text-rose-600' : 'fa-solid fa-sort-down ml-1 text-rose-600';
+      }
+    }
+
+    function renderExcluidosTable() {
+      const tbody = document.getElementById('tbody-excluidos');
+      tbody.innerHTML = '';
+      filteredExcluidos.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/80';
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 text-center text-xs font-semibold text-slate-400 border-r border-slate-100">${index + 1}</td>
+          <td class="py-2.5 px-4 font-medium text-slate-800">${item.setor}</td>
+          <td class="py-2.5 px-4 font-semibold text-slate-900">${item.nome}</td>
+          <td class="py-2.5 px-4 font-mono text-xs text-slate-600">${item.matricula}</td>
+          <td class="py-2.5 px-4 text-center">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border bg-rose-100 text-rose-800 border-rose-200">
+              <i class="fa-solid fa-user-xmark text-[10px]"></i><span>Não Mantido (NÃO)</span>
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // TAB 3 (MUDANÇAS)
+    function renderMudancasTable() {
+      const tbody = document.getElementById('tbody-mudancas');
+      tbody.innerHTML = '';
+
+      dataMudancas.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/80';
+
+        let badge = '';
+        if (item.categoria.includes('Exclusão')) badge = '<span class="bg-rose-100 text-rose-800 border border-rose-200 px-2.5 py-1 rounded-full text-xs font-medium"><i class="fa-solid fa-trash-can mr-1"></i>Exclusão de Caixa</span>';
+        else if (item.categoria.includes('Nova')) badge = '<span class="bg-purple-100 text-purple-800 border border-purple-200 px-2.5 py-1 rounded-full text-xs font-medium"><i class="fa-solid fa-square-plus mr-1"></i>Nova Caixa / Mesa</span>';
+        else badge = '<span class="bg-blue-100 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-full text-xs font-medium"><i class="fa-solid fa-pen-to-square mr-1"></i>Renomeação / Ajuste</span>';
+
+        tr.innerHTML = `
+          <td class="py-3 px-3 text-center text-xs font-semibold text-slate-400 border-r border-slate-100">${index + 1}</td>
+          <td class="py-3 px-4 font-medium ${item.setor_gep.includes('ADICIONAR') ? 'text-slate-400 italic' : 'text-slate-800'}">${item.setor_gep}</td>
+          <td class="py-3 px-4 font-semibold ${item.alteracao.toUpperCase() === 'EXCLUIR' ? 'text-rose-600' : 'text-slate-900'}">${item.alteracao}</td>
+          <td class="py-3 px-4 text-center">${badge}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // EXPORT CSV
+    function exportCSV() {
+      let csv = "data:text/csv;charset=utf-8,\uFEFF";
+      if (currentTab === 'incluidos') {
+        csv += "#,Caixa Mesa GPI,Nome Servidor,Matricula,Origem\n";
+        filteredIncluidos.forEach((item, i) => {
+          csv += `${i + 1},"${item.setor.replace(/"/g, '""')}","${item.nome.replace(/"/g, '""')}","${item.matricula}","${item.origem}"\n`;
+        });
+      } else if (currentTab === 'excluidos') {
+        csv += "#,Caixa Origem GEP,Nome Servidor,Matricula,Status\n";
+        filteredExcluidos.forEach((item, i) => {
+          csv += `${i + 1},"${item.setor.replace(/"/g, '""')}","${item.nome.replace(/"/g, '""')}","${item.matricula}","Nao Mantido (NAO)"\n`;
+        });
+      } else {
+        csv += "#,Caixa Origem GEP,Situacao GPI,Categoria\n";
+        dataMudancas.forEach((item, i) => {
+          csv += `${i + 1},"${item.setor_gep.replace(/"/g, '""')}","${item.alteracao.replace(/"/g, '""')}","${item.categoria}"\n`;
+        });
+      }
+
+      const link = document.createElement("a");
+      link.setAttribute("href", encodeURI(csv));
+      link.setAttribute("download", `Transicao_GEP_para_GPI_${currentTab}_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>
